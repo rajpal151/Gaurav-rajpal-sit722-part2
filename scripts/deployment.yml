@@ -1,4 +1,3 @@
-# Write Kubernetes Deployment ScriptapiVersion: apps/v1
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,23 +14,27 @@ spec:
     spec:
       containers:
       - name: book-catalog
-        image: myimage:latest
+        image: rajpal151  
         ports:
         - containerPort: 8000
-        env:
-        - name: DATABASE_URL
-          value: "postgres://rajpal151:password@postgres-service:5432/mydb"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: book-catalogue-service
+  name: book-catalog-service
 spec:
-  type: NodePort
   selector:
     app: book-catalog
   ports:
-    - protocol: TCP
-      port: 8000            # The port your container is listening on
-      targetPort: 8000      # The port exposed by your Docker container
-      nodePort: 30007       # The port on each Kubernetes node to expose the service (between 30000-32767)
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: LoadBalancer
